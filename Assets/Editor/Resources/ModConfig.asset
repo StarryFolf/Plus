@@ -22,7 +22,10 @@ MonoBehaviour:
 
     Module idea by Mirage Xel
 
-    Custom sounds from epidemicsound.com'
+    Custom sounds from epidemicsound.com
+
+
+    This module has TP support.'
   version: 1.0
   outputFolder: build
   previewImage: {fileID: 2800000, guid: c5693d94b531be94d8cc4efe7a4a1cc4, type: 3}

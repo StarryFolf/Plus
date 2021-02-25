@@ -22,7 +22,7 @@ public class PlusModuleScript : MonoBehaviour
     private int _moduleId;
 
     int newColor, oldColor;
-    bool FirstTime = true;
+    bool FirstTime = true,ModuleFirstTime=true;
     bool TimeModeActive;
     private bool TimeMode;
     private string[] colors;
@@ -181,7 +181,13 @@ public class PlusModuleScript : MonoBehaviour
         {
             if (Time == StartingTime && !processing)
             {
+                ModuleFirstTime = false;
                 yield break;
+            }
+            else if (ModuleFirstTime&&!processing)
+            {
+                yield return new WaitForSeconds(20f);
+                ModuleFirstTime = false;
             }
             else if (!processing)
             {
