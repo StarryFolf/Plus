@@ -13,4 +13,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   WorkshopPublishedFileID: 2404426336
   Title: +
-  Tags: []
+  Tags:
+  - Regular Module

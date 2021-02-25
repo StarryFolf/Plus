@@ -172,7 +172,7 @@ public class PlusModuleScript : MonoBehaviour
             }
         }
         Time = (int)Info.GetTime();
-        if (LightsOn && !AllModulesSolved) StartCoroutine("NormalModeCC");
+        if (LightsOn && !AllModulesSolved && !TimeMode) StartCoroutine("NormalModeCC");
     }
 
     IEnumerator NormalModeCC()
@@ -234,7 +234,7 @@ public class PlusModuleScript : MonoBehaviour
                     Total += (int)Char.GetNumericValue(ThirdChar);
                     break;
             }
-
+            Audio.PlaySoundAtTransform("Beep", Module.transform);
             if (t > 1) Debug.LogFormat("[+ #{0}] {1} minutes have passed. Your color is now {2} and your new total is {3}.", _moduleId, t, colors[newColor-1], Total);
             else Debug.LogFormat("[+ #{0}] A minute has passed. Your color is now {1} and your new total is {2}.", _moduleId, colors[newColor-1], Total);
             yield return new WaitForSeconds(60f);
