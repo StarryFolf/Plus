@@ -186,8 +186,10 @@ public class PlusModuleScript : MonoBehaviour
             }
             else if (ModuleFirstTime&&!processing)
             {
+                processing = true;
                 yield return new WaitForSeconds(20f);
                 ModuleFirstTime = false;
+                processing = false;
             }
             else if (!processing)
             {
