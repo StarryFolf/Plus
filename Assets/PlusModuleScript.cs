@@ -289,7 +289,7 @@ public class PlusModuleScript : MonoBehaviour
         while (Total>0)
         {
             remainder = Total % 25;
-            if (remainder < 9) remainder += 65;
+            if (remainder <= 9) remainder += 65;
             else remainder += 66;
             SubmitSeq += (char)remainder;
             Total /= 25;
