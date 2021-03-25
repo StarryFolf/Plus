@@ -407,11 +407,14 @@ public class PlusModuleScript : MonoBehaviour
             yield return new WaitUntil(() => paused);
             yield return new WaitForSeconds(0.1f);
         }
-
         yield return "trycancel";
+        if (submissionString == SubmitSeq)
+        {
+            yield return "awardpointsonsolve " + stage;
+        }
         yield return plusBtn;
         yield return new WaitForSeconds(0.05f);
         yield return plusBtn;
-        yield return new WaitForSeconds(0.05f);
+        yield return new WaitForSeconds(0.05f);       
     }
 }
