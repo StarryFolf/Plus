@@ -433,7 +433,17 @@ public class PlusModuleScript : MonoBehaviour
                     }
                 }
             }
-            if (submissionString == SubmitSeq)
+            string tempSub = "";
+            int chars = 0;
+            for (int c = 0; c < SubmitSeq.Length; c++)
+            {
+                int y = submission[chars];
+                int x = submission[chars + 1];
+
+                tempSub += x > 4 || y > 4 ? "?" : Letters[y, x];
+                chars += 2;
+            }
+            if (tempSub == SubmitSeq)
             {
                 yield return "awardpointsonsolve " + stage;
             }
