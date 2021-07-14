@@ -22,13 +22,13 @@ public class PlusModuleScript : MonoBehaviour
     private int _moduleId;
 
     int newColor, oldColor;
-    bool FirstTime = true,ModuleFirstTime=true;
+    bool FirstTime = true, ModuleFirstTime = true;
     bool TimeModeActive;
     private bool TimeMode;
     private string[] colors;
     private static string[] exceptions = null;
     int SolvableModules;
-    private int[] submission;
+    private int[] submission,store;
     private string submissionString;
     int pressCount = -1;
 
@@ -38,10 +38,10 @@ public class PlusModuleScript : MonoBehaviour
 
     int Time, StartingTime;
 
-    int stage,remainder,SubmitStage = 0;
+    int stage, remainder, SubmitStage = 0, TotalStages = 0, CurrentStage = 0;
 
     bool ModuleSolved, processing = false;
-    private bool AllModulesSolved,LightsOn;
+    private bool AllModulesSolved, LightsOn;
     bool holding, paused;
 
     string SubmitSeq;
@@ -110,7 +110,7 @@ public class PlusModuleScript : MonoBehaviour
             "Forget Maze Not"
         });
         //Somehow Magenta doesn't appear when Range is (1,5)
-        colors = new string[6] { "Red", "Blue", "Yellow", "Green", "Magenta", "Magenta" };
+        colors = new string[5] { "Red", "Blue", "Yellow", "Green", "Magenta"};
         plusBtn.OnInteract += delegate ()
         {
             HandlePress();
@@ -136,6 +136,7 @@ public class PlusModuleScript : MonoBehaviour
         }
         else
         {
+            store = new int[1000];
             LightsOn = true;
             stage = 0;
             SolvableModules = Info.GetSolvableModuleNames().Where(x => !exceptions.Contains(x)).Count();
@@ -162,8 +163,8 @@ public class PlusModuleScript : MonoBehaviour
             stage++;
             if (stage >= SolvableModules)
             {
-                Debug.LogFormat("[+ #{0}] All modules have been solved. Now going into conversion and submit phase.",_moduleId);
-                plusBtnRender.material = plusBtnColor[0]; 
+                Debug.LogFormat("[+ #{0}] All modules have been solved. Now going into conversion and submit phase.", _moduleId);
+                plusBtnRender.material = plusBtnColor[5];
                 AllModulesSolved = true;
                 StopCoroutine("ChooseColor");
                 StopCoroutine("NormalModeCC");
@@ -184,7 +185,7 @@ public class PlusModuleScript : MonoBehaviour
                 ModuleFirstTime = false;
                 yield break;
             }
-            else if (ModuleFirstTime&&!processing)
+            else if (ModuleFirstTime && !processing)
             {
                 processing = true;
                 yield return new WaitForSeconds(20f);
@@ -212,22 +213,24 @@ public class PlusModuleScript : MonoBehaviour
                 yield return new WaitForSeconds(61f);
             }
             t++;
-            newColor = Random.Range(1, 6);
-            while (oldColor == newColor) newColor = Random.Range(1, 6);
+            TotalStages++;
+            newColor = Random.Range(0, 5);
+            while (oldColor == newColor) newColor = Random.Range(0, 5);
             oldColor = newColor;
             plusBtnRender.material = plusBtnColor[newColor];
+            store[CurrentStage] = newColor;
             switch (newColor)
             {
-                case 1:
+                case 0:
                     Total += BatHld;
                     break;
-                case 2:
+                case 1:
                     Total += Ind;
                     break;
-                case 3:
+                case 2:
                     Total += PrtPlts;
                     break;
-                case 4:
+                case 3:
                     Solved = Info.GetSolvedModuleNames().Count();
                     Unsolved = Modules - Solved;
                     Total += Unsolved;
@@ -237,9 +240,10 @@ public class PlusModuleScript : MonoBehaviour
                     break;
             }
             Audio.PlaySoundAtTransform("Beep", Module.transform);
-            if (t > 1) Debug.LogFormat("[+ #{0}] {1} minutes have passed. Your color is now {2} and your new total is {3}.", _moduleId, t, colors[newColor-1], Total);
-            else Debug.LogFormat("[+ #{0}] A minute has passed. Your color is now {1} and your new total is {2}.", _moduleId, colors[newColor-1], Total);
+            if (t > 1) Debug.LogFormat("[+ #{0}] {1} minutes have passed. Your color is now {2} and your new total is {3}.", _moduleId, t, colors[newColor], Total);
+            else Debug.LogFormat("[+ #{0}] A minute has passed. Your color is now {1} and your new total is {2}.", _moduleId, colors[newColor], Total);
             yield return new WaitForSeconds(60f);
+            CurrentStage++;
             StartCoroutine("ChooseColor");
         }
         else
@@ -250,22 +254,24 @@ public class PlusModuleScript : MonoBehaviour
                 FirstTime = false;
             }
             t++;
-            newColor = Random.Range(1, 6);
-            while (oldColor == newColor) newColor = Random.Range(1, 6);
+            TotalStages++;
+            newColor = Random.Range(0, 5);
+            while (oldColor == newColor) newColor = Random.Range(0, 5);
             oldColor = newColor;
             plusBtnRender.material = plusBtnColor[newColor];
+            store[CurrentStage] = newColor;
             switch (newColor)
             {
-                case 1:
+                case 0:
                     Total += BatHld;
                     break;
-                case 2:
+                case 1:
                     Total += Ind;
                     break;
-                case 3:
+                case 2:
                     Total += PrtPlts;
                     break;
-                case 4:
+                case 3:
                     Solved = Info.GetSolvedModuleNames().Count();
                     Unsolved = Modules - Solved;
                     Total += Unsolved;
@@ -275,18 +281,19 @@ public class PlusModuleScript : MonoBehaviour
                     break;
             }
             Audio.PlaySoundAtTransform("Beep", Module.transform);
-            if (t > 1) Debug.LogFormat("[+ #{0}] {1} minutes of bomb time have passed. Your color is now {2} and your new total is {3}.", _moduleId, t, colors[newColor - 1], Total);
-            else Debug.LogFormat("[+ #{0}] A minute of bomb time has passed. Your color is now {1} and your new total is {2}.", _moduleId, colors[newColor - 1], Total);
+            if (t > 1) Debug.LogFormat("[+ #{0}] {1} minutes of bomb time have passed. Your color is now {2} and your new total is {3}.", _moduleId, t, colors[newColor], Total);
+            else Debug.LogFormat("[+ #{0}] A minute of bomb time has passed. Your color is now {1} and your new total is {2}.", _moduleId, colors[newColor], Total);
+            CurrentStage++;
         }
     }
 
     void Conversion()
     {
-        if (Total==0)
+        if (Total == 0)
         {
             SubmitSeq = "A";
         }
-        while (Total>0)
+        while (Total > 0)
         {
             remainder = Total % 25;
             if (remainder <= 9) remainder += 65;
@@ -294,12 +301,14 @@ public class PlusModuleScript : MonoBehaviour
             SubmitSeq += (char)remainder;
             Total /= 25;
         }
-        submission = new int[SubmitSeq.Length*2];
+        submission = new int[SubmitSeq.Length * 2];
         Debug.LogFormat("[+ #{0}] The submit sequence is {1}.", _moduleId, SubmitSeq);
     }
 
     private void HandlePress()
     {
+        StopCoroutine("StageRecover");
+        plusBtnRender.material = plusBtnColor[5];
         Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonPress, plusBtn.transform);
         plusBtn.AddInteractionPunch();
         if (ReleaseCoroutine != null)
@@ -323,7 +332,7 @@ public class PlusModuleScript : MonoBehaviour
             {
                 submission[SubmitStage] = pressCount;
                 SubmitStage++;
-                if (SubmitStage == SubmitSeq.Length*2)
+                if (SubmitStage == SubmitSeq.Length * 2)
                 {
                     AnsCheck();
                     return;
@@ -357,12 +366,12 @@ public class PlusModuleScript : MonoBehaviour
             int y = submission[chars];
             int x = submission[chars + 1];
 
-            submissionString += x > 4 || y > 4 ? "?" : Letters[y , x];
+            submissionString += x > 4 || y > 4 ? "?" : Letters[y, x];
             chars += 2;
         }
         if (submissionString == SubmitSeq)
         {
-            Debug.LogFormat("[+ #{0}] You submitted {1}. Thats correct!",_moduleId, submissionString);
+            Debug.LogFormat("[+ #{0}] You submitted {1}. Thats correct!", _moduleId, submissionString);
             Debug.LogFormat("[+ #{0}] Module passed!", _moduleId);
             Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.CorrectChime, Module.transform);
             Module.HandlePass();
@@ -370,10 +379,25 @@ public class PlusModuleScript : MonoBehaviour
         }
         else
         {
-            Debug.LogFormat("[+ #{0}] You Submitted {1}. Strike!",_moduleId, submissionString);
+            Debug.LogFormat("[+ #{0}] You Submitted {1}. Strike!", _moduleId, submissionString);
             Module.HandleStrike();
             ResetEntry();
+            StartCoroutine("StageRecover");
         }
+    }
+
+    IEnumerator StageRecover()
+    {
+        yield return new WaitForSeconds(3f);
+        for (int i = 0; i < TotalStages; i++)
+        {
+            Audio.PlaySoundAtTransform("Tap", Module.transform);
+            plusBtnRender.material = plusBtnColor[store[i]];
+            yield return new WaitForSeconds(1.5f);
+        }
+        Audio.PlaySoundAtTransform("Tap", Module.transform);
+        plusBtnRender.material = plusBtnColor[5];
+        StartCoroutine("StageRecover");
     }
 
     void ResetEntry()
@@ -381,40 +405,142 @@ public class PlusModuleScript : MonoBehaviour
         SubmitStage = 0;
         pressCount = -1;
         submissionString = "";
-        submission = new int[SubmitSeq.Length*2];
+        submission = new int[SubmitSeq.Length * 2];
     }
-#pragma warning disable 414
+
+    //twitch plays
+    #pragma warning disable 414
     private string TwitchHelpMessage = "Tap your answer with !{0} tap XX XX.... Example: !{0} tap 23 11 34 32";
-#pragma warning restore 414
-    IEnumerator ProcessTwitchCommand (string command)
+    #pragma warning restore 414
+    IEnumerator ProcessTwitchCommand(string command)
     {
-        if (!AllModulesSolved) yield return null;
-        foreach (char tap in command)
+        if (!AllModulesSolved)
         {
-            yield return "trycancel";
-
-            int taps;
-            if (!int.TryParse(tap.ToString(), out taps)) continue;
-            for (int i = 0; i < taps; i++)
+            yield return "sendtochaterror All other modules have not been solved yet!";
+            yield break;
+        }
+        if (command.StartsWith("tap "))
+        {
+            int[] valids = { 11, 12, 13, 14, 15, 21, 22, 23, 24, 25, 31, 32, 33, 34, 35, 41, 42, 43, 44, 45, 51, 52, 53, 54, 55 };
+            foreach (string tap in command.Split(' '))
             {
-                yield return plusBtn;
-                yield return new WaitForSeconds(0.05f);
-                yield return plusBtn;
-                yield return new WaitForSeconds(0.05f);
-                yield return "trycancel";
+                if (tap != "tap")
+                {
+                    int taps;
+                    if (!int.TryParse(tap.ToString(), out taps))
+                    {
+                        yield return "sendtochaterror The pair of numbers '" + tap.ToString() + "' is invalid!";
+                        yield break;
+                    }
+                    if (!valids.Contains(taps))
+                    {
+                        yield return "sendtochaterror The pair of numbers '" + taps + "' is invalid!";
+                        yield break;
+                    }
+                }
             }
+            foreach (string tap in command.Split(' '))
+            {
+                if (tap != "tap")
+                {
+                    for (int j = 0; j < 2; j++)
+                    {
+                        for (int i = 0; i < int.Parse(tap[j].ToString()); i++)
+                        {
+                            plusBtn.OnInteract();
+                            yield return new WaitForSeconds(0.05f);
+                            plusBtn.OnInteractEnded();
+                            yield return new WaitForSeconds(0.05f);
+                        }
+                        yield return new WaitUntil(() => paused);
+                        yield return new WaitForSeconds(0.1f);
+                    }
+                }
+            }
+            string tempSub = "";
+            int chars = 0;
+            for (int c = 0; c < SubmitSeq.Length; c++)
+            {
+                int y = submission[chars];
+                int x = submission[chars + 1];
 
-            yield return new WaitUntil(() => paused);
+                tempSub += x > 4 || y > 4 ? "?" : Letters[y, x];
+                chars += 2;
+            }
+            if (tempSub == SubmitSeq)
+            {
+                yield return "awardpointsonsolve " + TotalStages;
+            }
+            plusBtn.OnInteract();
+            yield return new WaitForSeconds(0.05f);
+            plusBtn.OnInteractEnded();
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
+
+    IEnumerator TwitchHandleForcedSolve()
+    {
+        while (!LightsOn || !AllModulesSolved) yield return true;
+        List<int> corrects = new List<int>();
+        for (int c = 0; c < SubmitSeq.Length; c++)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                for (int k = 0; k < 5; k++)
+                {
+                    if (Letters[i, k] == SubmitSeq[c].ToString())
+                    {
+                        corrects.Add(i + 1);
+                        corrects.Add(k + 1);
+                        if (c == SubmitSeq.Length - 1)
+                            goto proceed;
+                        else
+                            goto nextChar;
+                    }
+                }
+            }
+            nextChar:
+                yield return null;
+        }
+        proceed:
+        for (int i = 0; i < corrects.Count; i++)
+        {
+            if (submission[i] == 0)
+                break;
+            if (corrects[i] != submission[i])
+            {
+                Module.HandlePass();
+                ModuleSolved = true;
+                yield break;
+            }
+        }
+        if (pressCount > corrects[SubmitStage])
+        {
+            Module.HandlePass();
+            ModuleSolved = true;
+            yield break;
+        }
+        int start = SubmitStage;
+        for (int c = start; c < corrects.Count; c++)
+        {
+            int start2;
+            if (c == start && (pressCount != -1))
+                start2 = pressCount;
+            else
+                start2 = 0;
+            for (int l = start2; l < corrects[c]; l++)
+            {
+                plusBtn.OnInteract();
+                yield return new WaitForSeconds(0.05f);
+                plusBtn.OnInteractEnded();
+                yield return new WaitForSeconds(0.05f);
+            }
+            while (!paused) yield return true;
             yield return new WaitForSeconds(0.1f);
         }
-        yield return "trycancel";
-        if (submissionString == SubmitSeq)
-        {
-            yield return "awardpointsonsolve " + stage;
-        }
-        yield return plusBtn;
+        plusBtn.OnInteract();
         yield return new WaitForSeconds(0.05f);
-        yield return plusBtn;
-        yield return new WaitForSeconds(0.05f);       
+        plusBtn.OnInteractEnded();
+        yield return new WaitForSeconds(0.05f);
     }
 }

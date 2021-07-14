@@ -442,7 +442,7 @@ MonoBehaviour:
   Children:
   - {fileID: 114595045924683008}
   IsPassThrough: 0
-  ChildRowLength: 0
+  ChildRowLength: 1
   Highlight: {fileID: 114157740283983558}
   SelectableColliders: []
   DefaultSelectableIndex: 0
@@ -516,13 +516,12 @@ MonoBehaviour:
   plusBtnRender: {fileID: 23122420646598186}
   boss: {fileID: 114202282130700150}
   plusBtnColor:
-  - {fileID: 2100000, guid: 3e6b5e18bf95d4144a240b9acd69c599, type: 2}
   - {fileID: 2100000, guid: 9bae06f1f832fdc43a8a7ebe66d4abd0, type: 2}
   - {fileID: 2100000, guid: 1e09b12fce6fcb046a6bdda9e86561de, type: 2}
   - {fileID: 2100000, guid: 56533aa7cf0016843b540f8b7f53dbbe, type: 2}
   - {fileID: 2100000, guid: b986f5fcaef072e42a0353bf78b36c87, type: 2}
   - {fileID: 2100000, guid: ec79b22415bfe844e992adaf938083ca, type: 2}
-  - {fileID: 2100000, guid: ec79b22415bfe844e992adaf938083ca, type: 2}
+  - {fileID: 2100000, guid: 3e6b5e18bf95d4144a240b9acd69c599, type: 2}
 --- !u!114 &114419452261538558
 MonoBehaviour:
   m_ObjectHideFlags: 1
