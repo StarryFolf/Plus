@@ -457,12 +457,16 @@ public class PlusModuleScript : MonoBehaviour
                     }
                 }
             }
+            int[] subArrTemp = new int[submission.Length];
+            for (int i = 0; i < submission.Length; i++)
+                subArrTemp[i] = submission[i];
+            subArrTemp[SubmitStage] = pressCount;
             string tempSub = "";
             int chars = 0;
             for (int c = 0; c < SubmitSeq.Length; c++)
             {
-                int y = submission[chars];
-                int x = submission[chars + 1];
+                int y = subArrTemp[chars];
+                int x = subArrTemp[chars + 1];
 
                 tempSub += x > 4 || y > 4 ? "?" : Letters[y, x];
                 chars += 2;
